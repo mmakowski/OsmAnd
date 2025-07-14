@@ -10,6 +10,7 @@
 	- For wording and consistency, please note https://docs.osmand.net/docs/technical/contributions/translating-osmand
 	Thx - Hardy
 -->
+    <string name="reviews">Reviews</string>
 
     <string name="obd_alt_battery_voltage">Battery voltage (adapter)</string>
     <string name="liter_single">Liter</string>

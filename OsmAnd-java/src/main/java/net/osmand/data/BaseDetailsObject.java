@@ -52,7 +52,7 @@ public class BaseDetailsObject {
 	public BaseDetailsObject(List<Amenity> amenities, String lang) {
 		this(Algorithms.isEmpty(lang) ? "en" : lang);
 
-		for (Amenity amenity : amenities) {
+		for (Amenity amenity : visibleFirst(amenities)) {
 			addObject(amenity);
 		}
 		objectCompleteness = ObjectCompleteness.FULL;
@@ -357,6 +357,28 @@ public class BaseDetailsObject {
 		sortObjectsByResourceType();
 		sortObjectsByClass();
 	}
+
+    /**
+     * Orders {@code amenities} so that these whose type (POI category) is <i>top-level visible</i>
+     * occur in the returned list before those whose type is not top-level visible. Non-visible
+     * amenities can be used to store auxiliary information (for example, reviews); in that case
+     * they should not influence the type of the synthetic amenity being created, and that is derived
+     * from the first amenity in the list.
+     */
+    private static List<Amenity> visibleFirst(List<Amenity> amenities) {
+        List<Amenity> sortedAmenities = new ArrayList(amenities);
+        sortedAmenities.sort((Amenity a1, Amenity a2) -> {
+            boolean a1Visible = a1.getType().isTopVisible();
+            boolean a2Visible = a2.getType().isTopVisible();
+            if (a1Visible && !a2Visible) {
+                return -1;
+            } else if (!a1Visible && a2Visible) {
+                return 1;
+            }
+            return 0;
+        });
+        return sortedAmenities;
+    }
 
 	private void sortObjectsByLang() {
 		objects.sort((o1, o2) -> {
